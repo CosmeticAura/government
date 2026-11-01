@@ -163,7 +163,7 @@ COURSE = {
  "name": "Government and Economics, 10th grade",
  "eyebrow": "The Clinton School, 2026 to 2027",
  "intro": "Study loops for the Foundations of American Democracy summative: the essay format, the key terms and a plan for each of the three prompts.",
- "img": "img", "breakMinutes": 5, "dumpMinutes": 7,
+ "img": "img", "breakMinutes": 2.5, "dumpMinutes": 7,
  "extras": [
   {"eyebrow": "Summative Mon, Nov 2", "title": "Timed essay practice", "text": "Pick a prompt, write for 40 minutes, then check your essay against the rubric.", "href": "practice/"},
   {"eyebrow": "Hand in Mon, Nov 2", "title": "Key terms sheet", "text": "All 14 terms in the three columns you copy by hand. Prints on one page.", "href": "terms/"}],
