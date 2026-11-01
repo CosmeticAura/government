@@ -11,3 +11,4 @@ Live site: https://cosmeticaura.github.io/government/
 Progress saves in your browser only. Rebuild the loop pages with the studynow kit: `python3 build.py course.py OUT`, then copy `index.html` and `unit-1/` back.
 
 - `diagnostic/` checks facts, terms, essay format and your three theses.
+- `worksheet/` is the collaborative essay practice sheet on natural rights, filled in with explanations.
