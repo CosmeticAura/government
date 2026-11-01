@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Timed essay practice, Government</title>
+<meta name="description" content="Write a 40 minute practice essay on one of the three summative prompts, then check it against the rubric.">
+<script>try{document.documentElement.dataset.theme=localStorage.getItem("studynow:appearance")||"light"}catch(e){document.documentElement.dataset.theme="light"}</script>
+<link rel="stylesheet" href="../practice.css">
+</head>
+<body>
+<div class="bar"><div class="in"><a href="../">&lsaquo; Government</a><span class="t">Essay practice</span><span class="sp"></span><span class="clock" id="clock" aria-live="off">40:00</span></div></div>
+<main>
+<header><h1>Timed essay practice</h1><p class="lede">Pick a prompt, start the clock and write the whole essay with only your zine and post-its open. Your writing saves on this device as you type.</p></header>
+
+<section class="card" id="pickCard">
+  <h2>1. Pick a prompt</h2>
+  <div class="picks" id="picks"></div>
+</section>
+
+<section class="card">
+  <div class="row"><h2>2. Write</h2><span class="sp"></span>
+    <button class="b pri" id="startBtn">Start 40 minutes</button>
+    <button class="b" id="pauseBtn" hidden>Pause</button>
+  </div>
+  <p class="prompt" id="promptText"></p>
+  <textarea class="write" id="essay" placeholder="Introduction: three context sentences, then your thesis." aria-label="Your essay"></textarea>
+  <div class="row"><span class="meta" id="count">0 words</span><span class="sp"></span>
+    <button class="b" id="doneBtn">Done, check my essay</button>
+  </div>
+  <div class="confirm" id="doneConfirm" hidden><span>Stop the clock and check your essay now?</span><span class="sp"></span><button class="b quiet" id="doneNo">Keep writing</button><button class="b pri" id="doneYes">Check it</button></div>
+</section>
+
+<section class="card" id="checkCard" hidden>
+  <h2>3. Check it against the rubric</h2>
+  <p class="lede">Tick only what your essay really does. The key terms are counted for you.</p>
+  <div><span class="meta">Unit key terms found</span><div class="terms" id="terms"></div></div>
+  <ul class="checks" id="checks"></ul>
+  <div class="row"><span class="score" id="score">0 of 8</span><span class="sp"></span><span class="meta" id="verdict"></span></div>
+</section>
+
+<section class="card">
+  <div class="row"><span class="meta">Start over clears this prompt's essay, clock and checks.</span><span class="sp"></span><button class="b quiet" id="resetBtn">Start over</button></div>
+  <div class="confirm" id="resetConfirm" hidden><span>Clear this essay for good?</span><span class="sp"></span><button class="b quiet" id="resetNo">Keep it</button><button class="b pri" id="resetYes">Clear it</button></div>
+</section>
+</main>
+<script>
+(function(){
+"use strict";
+var PROMPTS=[
+ {id:"p1",title:"The founders' goals",text:"What were the goals and priorities of the founders in drafting and ratifying the Constitution?"},
+ {id:"p2",title:"How democracy evolved",text:"How has American democracy evolved?"},
+ {id:"p3",title:"The 21st century",text:"To what extent is the Constitution serving Americans' needs in the 21st century?"}];
+// Each term counts once; the patterns catch the common ways it gets written.
+var TERMS=[
+ ["Natural rights",/natural rights?/i],["Social contract",/social contract/i],["Popular sovereignty",/popular sovereignty|we the people/i],
+ ["Federalists",/federalists?/i],["Bill of Rights",/bill of rights/i],["Checks and balances",/checks and balances/i],
+ ["Separation of powers",/separation of powers/i],["Amendment process",/article v\b|amendment process|ratif/i],
+ ["13th Amendment",/13th amendment|thirteenth amendment/i],["14th Amendment",/14th amendment|fourteenth amendment|equal protection|due process/i],
+ ["15th Amendment",/15th amendment|fifteenth amendment/i],["4th Amendment",/4th amendment|fourth amendment/i],
+ ["Commerce Clause",/commerce clause/i],["Supremacy Clause",/supremacy clause/i],["Judicial review",/judicial review/i],
+ ["Federalism",/federalism/i],["10th Amendment",/10th amendment|tenth amendment|reserved powers?/i],
+ ["Necessary and Proper",/necessary and proper/i],["Enlightenment",/enlightenment/i],["Executive orders",/executive orders?/i]];
+var CHECKS=[
+ ["Thesis is a claim with two reasons","It follows: claim because argument 1 and argument 2"],
+ ["Three context sentences before the thesis","They go from broad to narrow"],
+ ["Each body paragraph opens with a topic sentence",""],
+ ["Evidence is specific and named","Articles, amendments, cases or events with years"],
+ ["Each body paragraph ends with analysis","Why the evidence matters and how it proves the thesis"],
+ ["Counterargument plus a refutation","\"Critics argue...\" then why your side is stronger"],
+ ["Eight or more unit key terms","Counted above"],
+ ["Complete sentences in full paragraphs","No lists or fragments"]];
+var MIN=40, K="gov:practice", S=load(), tick=null;
+function blank(){return {cur:"p1",e:{}}}
+function load(){try{var v=JSON.parse(localStorage.getItem(K));if(v&&v.e)return v}catch(e){}return blank()}
+function save(){try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}}
+function cur(){var x=S.e[S.cur];if(!x){x=S.e[S.cur]={text:"",left:MIN*60000,running:false,endAt:0,done:false,checks:{}}}return x}
+var $=function(id){return document.getElementById(id)};
+function fmt(ms){ms=Math.max(0,Math.round(ms/1000));return Math.floor(ms/60)+":"+String(ms%60).padStart(2,"0")}
+function remaining(x){return x.running?Math.max(0,x.endAt-Date.now()):x.left}
+function words(t){var m=t.trim().match(/\S+/g);return m?m.length:0}
+function found(t){return TERMS.filter(function(r){return r[1].test(t)}).map(function(r){return r[0]})}
+
+function renderPicks(){
+  $("picks").innerHTML="";
+  PROMPTS.forEach(function(p){
+    var b=document.createElement("button");b.className="pick";b.type="button";b.setAttribute("aria-pressed",String(S.cur===p.id));
+    var x=S.e[p.id], tag=x&&x.done?" (checked)":x&&x.text?" (started)":"";
+    b.innerHTML='<span class="dot"></span><span><b></b><br><span class="meta"></span></span>';
+    b.querySelector("b").textContent=p.title+tag;b.querySelector(".meta").textContent=p.text;
+    b.onclick=function(){pauseIfRunning();S.cur=p.id;save();render()};
+    $("picks").appendChild(b);
+  });
+}
+function pauseIfRunning(){var x=S.e[S.cur];if(x&&x.running){x.left=remaining(x);x.running=false}}
+function renderClock(){
+  var x=cur(),r=remaining(x);$("clock").textContent=fmt(r);$("clock").classList.toggle("low",r<=5*60000);
+  if(x.running&&r<=0){x.running=false;x.left=0;finish()}
+}
+function render(){
+  var x=cur(),p=PROMPTS.find(function(q){return q.id===S.cur});
+  renderPicks();$("promptText").textContent=p.text;
+  if($("essay").value!==x.text)$("essay").value=x.text;
+  $("count").textContent=words(x.text)+" words";
+  $("startBtn").textContent=x.left<MIN*60000&&!x.running&&x.left>0?"Resume":"Start 40 minutes";
+  $("startBtn").hidden=x.running||x.done||x.left<=0;$("pauseBtn").hidden=!x.running;
+  $("checkCard").hidden=!x.done;$("doneBtn").disabled=x.done;
+  renderClock();if(x.done)renderChecks();
+  clearInterval(tick);if(x.running)tick=setInterval(renderClock,500);
+}
+function renderChecks(){
+  var x=cur(),f=found(x.text);
+  $("terms").innerHTML=TERMS.map(function(r){return '<span class="term'+(f.indexOf(r[0])>=0?" on":"")+'">'+r[0]+'</span>'}).join("");
+  x.checks[6]=f.length>=8;
+  $("checks").innerHTML="";
+  CHECKS.forEach(function(c,i){
+    var li=document.createElement("li"),b=document.createElement("button");b.type="button";b.className="check";
+    b.setAttribute("aria-pressed",String(!!x.checks[i]));
+    b.innerHTML='<span class="box"></span><span><span class="lbl"></span><span class="why"></span></span>';
+    b.querySelector(".lbl").textContent=c[0]+(i===6?" ("+f.length+" found)":"");b.querySelector(".why").textContent=c[1];
+    if(i===6){b.disabled=true;b.style.cursor="default"}
+    b.onclick=function(){x.checks[i]=!x.checks[i];save();renderChecks()};
+    li.appendChild(b);$("checks").appendChild(li);
+  });
+  var n=CHECKS.filter(function(c,i){return x.checks[i]}).length;
+  $("score").textContent=n+" of "+CHECKS.length;
+  $("verdict").textContent=n===8?"Ready for Monday":n>=6?"Close. Fix the unticked ones in your next practice":"Reread the plan for this prompt, then try again";
+  save();
+}
+function finish(){var x=cur();pauseIfRunning();x.done=true;save();render();$("checkCard").scrollIntoView({behavior:"smooth",block:"start"})}
+$("essay").addEventListener("input",function(){var x=cur();x.text=this.value;$("count").textContent=words(x.text)+" words";save();if(x.done)renderChecks()});
+$("startBtn").onclick=function(){var x=cur();x.running=true;x.endAt=Date.now()+x.left;save();render();$("essay").focus()};
+$("pauseBtn").onclick=function(){pauseIfRunning();save();render()};
+$("doneBtn").onclick=function(){$("doneConfirm").hidden=false};
+$("doneNo").onclick=function(){$("doneConfirm").hidden=true};
+$("doneYes").onclick=function(){$("doneConfirm").hidden=true;finish()};
+$("resetBtn").onclick=function(){$("resetConfirm").hidden=false};
+$("resetNo").onclick=function(){$("resetConfirm").hidden=true};
+$("resetYes").onclick=function(){delete S.e[S.cur];save();$("resetConfirm").hidden=true;$("essay").value="";render()};
+document.addEventListener("visibilitychange",function(){if(!document.hidden)renderClock()});
+render();
+})();
+</script>
+</body>
+</html>
