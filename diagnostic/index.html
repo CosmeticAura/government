@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Gov diagnostic</title>
+<style>
+:root{--bg:#f2f2f7;--cell:#fff;--label:#000;--sec:rgba(60,60,67,.6);--ter:rgba(60,60,67,.3);--sep:rgba(60,60,67,.29);--fill:rgba(118,118,128,.12);--tint:#007aff;--green:#34c759;--red:#ff3b30;color-scheme:light}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--label);font:17px/1.45 -apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",system-ui,sans-serif;-webkit-font-smoothing:antialiased;letter-spacing:-.01em}
+main{max-width:680px;margin:0 auto;padding:12px 16px 56px}
+header{padding:28px 4px 4px}
+h1{font:700 34px/1.15 -apple-system,"SF Pro Display",system-ui,sans-serif;margin:0}
+.lede{color:var(--sec);font-size:15px;margin:6px 0 0}
+h2{font-size:13px;font-weight:400;text-transform:uppercase;letter-spacing:.02em;color:var(--sec);margin:30px 0 7px 16px}
+.group{background:var(--cell);border-radius:10px;overflow:hidden}
+.row{padding:12px 16px;position:relative;display:grid;gap:8px;grid-template-columns:minmax(0,1fr)}
+.row + .row::before{content:"";position:absolute;left:16px;right:0;top:0;border-top:.5px solid var(--sep)}
+.row p{margin:0;font-size:16px}
+select,textarea{font:inherit;font-size:16px;padding:8px 12px;border-radius:10px;border:0;background:var(--fill);color:var(--label);max-width:100%;outline:none}
+textarea{width:100%;min-height:120px;resize:vertical}
+select:focus,textarea:focus{box-shadow:0 0 0 2px var(--tint)}
+.ok{box-shadow:0 0 0 2px var(--green)!important}.no{box-shadow:0 0 0 2px var(--red)!important}
+.opts{display:grid;gap:6px}
+.opts label{display:flex;gap:10px;align-items:flex-start;font-size:16px;padding:8px 10px;border-radius:10px;background:var(--fill);cursor:pointer}
+.opts input{margin:3px 0 0;accent-color:var(--tint);flex:none}
+.opts label.ok{background:rgba(52,199,89,.14);box-shadow:none!important}.opts label.no{background:rgba(255,59,48,.12);box-shadow:none!important}
+.fb{font-size:14px;color:var(--sec)}.fb:empty{display:none}.fb b.g{color:var(--green)}.fb b.r{color:var(--red)}
+.model{font-size:15px;background:rgba(0,122,255,.07);border-radius:10px;padding:10px 12px}
+.checks{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:15px}
+.checks label{display:flex;gap:6px;align-items:center}
+button{font:600 15px -apple-system,system-ui,sans-serif;padding:10px 20px;border-radius:999px;border:0;background:var(--tint);color:#fff;cursor:pointer}
+button.gray{background:var(--fill);color:var(--tint)}
+button:active{opacity:.6}
+.bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:14px 4px 0}
+.score{font-size:22px;font-weight:700}
+#out{font:13px/1.45 ui-monospace,Menlo,monospace;min-height:160px}
+[hidden]{display:none!important}
+input.t{font:inherit;font-size:16px;padding:8px 12px;border-radius:10px;border:0;background:var(--fill);width:100%;outline:none}
+input.t:focus{box-shadow:0 0 0 2px var(--tint)}
+.fix{background:#fff7e6;border-radius:10px;padding:12px 16px;font-size:15px}.fix p{margin:4px 0}
+
+input,textarea,select{color:#000!important;-webkit-text-fill-color:#000;background-color:rgba(118,118,128,.12)}
+input::placeholder,textarea::placeholder{color:rgba(60,60,67,.5);-webkit-text-fill-color:rgba(60,60,67,.5)}
+html,body{color-scheme:light}
+</style></head><body><main>
+<header><p><a href="../" style="color:#007aff;text-decoration:none;font-weight:600">&lsaquo; Home</a></p><h1>Gov diagnostic</h1><p class="lede">About 15 minutes, no zine, no notes. Part 1 is facts and cases, part 2 is terms and essay format, part 3 is your theses and a counterargument. Blank beats guessing. Press Grade at the end.</p></header>
+<h2>Part 1: facts and cases</h2><div class="group" id="p1"></div>
+<h2>Part 2: terms and essay format</h2><div class="group" id="p2"></div>
+<h2>Part 3: theses and counterargument</h2><div class="group" id="p3"></div>
+<div class="bar"><button id="go">Grade</button><button class="gray" id="rs">Start over</button></div>
+<div id="after" hidden><h2>Your score</h2><div class="group"><div class="row"><p class="score" id="sc"></p><p class="fb" id="sc2"></p></div>
+<div class="row"><p>Check your theses against the models above and tick what yours has. Then go back over anything you missed in the <a href="../unit-1/">unit 1 loop</a> and the <a href="../terms/">key terms sheet</a>, and write a <a href="../practice/">timed practice essay</a>.</p></div></div></div>
+</main>
+<script>
+(function(){
+var D={"F": [["What year was the Constitution written, and where?", ["1787"], "1787, in Philadelphia"], ["What year was the Bill of Rights ratified?", ["1791"], "1791"], ["Whose idea was separation of powers?", ["montesquieu"], "Montesquieu"], ["What fraction of both houses overrides a veto?", ["2/3|two thirds|two-thirds"], "2/3 of both houses"], ["Which Article holds the Supremacy Clause?", ["vi|6"], "Article VI"], ["Which amendment reserves powers to the states or the people?", ["10"], "The 10th"], ["13th, 14th, 15th Amendments: give each one's year.", ["1865", "1868", "1870"], "13th 1865, 14th 1868, 15th 1870"], ["What does it take to ratify an amendment after Congress proposes it?", ["3/4|three fourths|three-fourths|three quarters"], "3/4 of the states"], ["How many amendments have passed?", ["27"], "27, out of more than 11,000 proposed"], ["Which case created judicial review, and what year?", ["marbury", "1803"], "Marbury v. Madison, 1803"], ["Which 1961 case said illegally searched evidence can't be used?", ["mapp"], "Mapp v. Ohio"], ["Which 1974 case showed the President must follow the law?", ["nixon"], "U.S. v. Nixon"], ["What year was the Voting Rights Act?", ["1965"], "1965"], ["Which 2014 case says police need a warrant to search a phone?", ["riley"], "Riley v. California"], ["Which 2018 case says police need a warrant for phone location data?", ["carpenter"], "Carpenter v. U.S."], ["Which clause lets Congress regulate AI, and in which Article?", ["commerce"], "The Commerce Clause, Article I"]], "M": [["\"Power comes from the people,\" as in \"We the People,\" is", ["Natural rights", "Popular sovereignty", "Social contract", "Federalism"], 1], ["People give up some freedom in exchange for a government that protects their rights. This is", ["Social contract", "Checks and balances", "Judicial review", "Popular sovereignty"], 0], ["Who wanted a stronger national government?", ["Antifederalists", "Federalists", "Both", "Neither"], 1], ["The 14th Amendment gave", ["The vote to women", "Citizenship, equal protection and due process", "The end of slavery", "Voting at 18"], 1], ["The 13th Amendment's loophole is", ["\"except as a punishment for crime\"", "\"except in wartime\"", "\"except for women\"", "There is none"], 0], ["What goes in paragraph 4 of the essay?", ["A second piece of evidence", "The alternative perspective and your answer to it", "The conclusion", "More context"], 1], ["The thesis formula is", ["Claim because argument 1 and argument 2", "Topic, evidence, analysis", "Critics argue that...", "This shows... which proves..."], 0], ["How many key terms should you use correctly for a top score on Criterion A?", ["2 or 3", "At least 8", "All 14", "None, terms don't count"], 1]], "W": [["Prompt 1: What were the goals and priorities of the founders in drafting and ratifying the Constitution? Write your thesis.", "The founders' main goal was a national government strong enough to work but limited enough that it could never become a tyranny, because they built it on Enlightenment ideas about natural rights and popular sovereignty, and because the Antifederalists forced them to protect liberty in a Bill of Rights."], ["Prompt 2: How has American democracy evolved? Write your thesis.", "American democracy has evolved from a system where only some white men had a voice into a much wider democracy, because amendments extended rights to more people and judicial review made those rights real. That evolution has been slow and uneven."], ["Prompt 3: To what extent is the Constitution serving Americans' needs in the 21st century? Write your thesis.", "The Constitution serves Americans in the 21st century to a large extent, because courts can apply its broad principles to new technology and federalism lets the country handle problems like AI. However, its slow amendment process leaves digital privacy depending on court decisions instead of the text."], ["Pick any prompt and write its counterargument and your answer to it.", "P1: critics say it protected only wealthy white men; but Article V let it grow (13th, 14th, 15th). P2: the 13th's loophole and Jim Crow until the VRA 1965; but that's incomplete, not absent. P3: only 27 amendments vs India and Mexico, executive orders; but EOs can't make law, Congress has the purse, Nixon."]]},K='govdiag',S={};try{S=JSON.parse(localStorage.getItem(K))||{}}catch(e){}
+function sv(){try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}}
+function row(b,h){var d=document.createElement('div');d.className='row';d.innerHTML=h;b.appendChild(d);return d}
+var p1=document.getElementById('p1'),p2=document.getElementById('p2'),p3=document.getElementById('p3'),nF=D.F.length,nM=D.M.length;
+D.F.forEach(function(it,i){var r=row(p1,'<p>'+(i+1)+'. '+it[0]+'</p><input class="t" placeholder="Your answer"><span class="fb"></span>');var x=r.querySelector('input');x.value=S['f'+i]||'';x.oninput=function(){S['f'+i]=x.value;sv()}});
+D.M.forEach(function(it,i){var r=row(p2,'<p>'+(i+nF+1)+'. '+it[0]+'</p><div class="opts">'+it[1].map(function(o,j){return '<label><input type="radio" name="m'+i+'" value="'+j+'">'+o+'</label>'}).join('')+'</div><span class="fb"></span>');
+ r.querySelectorAll('input').forEach(function(x){if(S['m'+i]===x.value)x.checked=true;x.onchange=function(){S['m'+i]=x.value;sv()}})});
+D.W.forEach(function(it,i){var r=row(p3,'<p>'+(i+nF+nM+1)+'. '+it[0]+'</p><textarea placeholder="Your answer"></textarea><div class="model" hidden><b>Model.</b> '+it[1]+'</div><div class="checks" hidden>Mine has: '+(i<3?['Claim','Argument 1','Argument 2']:['Critics view','Evidence','Answer']).map(function(c){return '<label><input type="checkbox" value="'+c+'">'+c+'</label>'}).join('')+'</div>');
+ var t=r.querySelector('textarea');t.value=S['w'+i]||'';t.oninput=function(){S['w'+i]=t.value;sv()};
+ r.querySelectorAll('.checks input').forEach(function(c){c.checked=!!(S['c'+i]||{})[c.value];c.onchange=function(){(S['c'+i]=S['c'+i]||{})[c.value]=c.checked;sv()}})});
+function norm(v){return String(v).toLowerCase().replace(/th\b/g,'').replace(/\s+/g,' ')}
+var miss=[];
+function grade(){var n=0;miss=[];
+ p1.querySelectorAll('.row').forEach(function(r,i){var x=r.querySelector('input'),f=r.querySelector('.fb'),it=D.F[i],v=norm(x.value),ok=v.trim()&&it[1].every(function(k){return k.split('|').some(function(a){return v.indexOf(a)>=0})});
+  if(ok){n++;x.className='t ok';f.innerHTML='<b class="g">Right.</b> '+it[2]}else{x.className='t no';f.innerHTML='<b class="r">'+(v.trim()?'Not quite.':'Blank.')+'</b> '+it[2];miss.push((i+1)+'. '+it[0]+' Wrote: '+(x.value.trim()||'blank')+'. Answer: '+it[2])}});
+ p2.querySelectorAll('.row').forEach(function(r,i){var it=D.M[i],c=r.querySelector('input:checked'),f=r.querySelector('.fb'),L=r.querySelectorAll('label');L.forEach(function(l){l.className=''});L[it[2]].className='ok';
+  if(c&&+c.value===it[2]){n++;f.innerHTML='<b class="g">Right</b>'}else{if(c)L[+c.value].className='no';f.innerHTML='<b class="r">'+(c?'Not quite.':'Blank.')+'</b> '+it[1][it[2]];miss.push((i+nF+1)+'. '+it[0]+' Picked: '+(c?it[1][+c.value]:'blank')+'. Answer: '+it[1][it[2]])}});
+ p3.querySelectorAll('.model,.checks').forEach(function(x){x.hidden=false});
+ document.getElementById('sc').textContent=n+' of '+(nF+nM)+' on parts 1 and 2';
+ document.getElementById('sc2').textContent=n===nF+nM?'Perfect. Now check your theses.':(nF+nM-n)+' to fix. Answers are shown above.';
+ document.getElementById('after').hidden=false;S.graded=1;sv()}
+document.getElementById('go').onclick=function(){grade();document.getElementById('after').scrollIntoView({behavior:'smooth'})};
+document.getElementById('rs').onclick=function(){S={};sv();location.reload()};
+if(S.graded)grade();
+})();
+</script></body></html>

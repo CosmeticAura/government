@@ -9,3 +9,5 @@ Live site: https://cosmeticaura.github.io/government/
 - `terms/` is the key terms sheet in the three columns of the prep sheet, ready to print or copy by hand.
 
 Progress saves in your browser only. Rebuild the loop pages with the studynow kit: `python3 build.py course.py OUT`, then copy `index.html` and `unit-1/` back.
+
+- `diagnostic/` checks facts, terms, essay format and your three theses.
