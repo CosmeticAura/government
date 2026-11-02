@@ -13,3 +13,4 @@ Progress saves in your browser only. Rebuild the loop pages with the studynow ki
 - `diagnostic/` checks facts, terms, essay format and your three theses.
 - `worksheet/` is the collaborative essay practice sheet on natural rights, filled in with explanations.
 - `Gov-essay-worksheets.pdf` has all three prompts worked through as printable worksheets.
+- `Gov-essay-practice-blank.pdf` has blank worksheets for all three prompts plus a review plan.
