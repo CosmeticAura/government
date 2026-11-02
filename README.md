@@ -14,4 +14,4 @@ Progress saves in your browser only. Rebuild the loop pages with the studynow ki
 - `worksheet/` is the collaborative essay practice sheet on natural rights, filled in with explanations.
 - `Gov-essay-worksheets.pdf` has all three prompts worked through as printable worksheets.
 - `Gov-essay-practice-blank.pdf` has blank worksheets for all three prompts plus a review plan.
-- `Gov-prompt-1-founders-goals.pdf`, `Gov-prompt-2-democracy-evolved.pdf`, `Gov-prompt-3-21st-century.pdf` are the class worksheet filled in for each prompt.
+- `Gov-prompt-1-natural-rights.pdf`, `Gov-prompt-2-democracy-evolved.pdf`, `Gov-prompt-3-21st-century.pdf` are the class worksheet filled in for each prompt.
