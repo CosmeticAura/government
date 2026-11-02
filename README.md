@@ -15,3 +15,4 @@ Progress saves in your browser only. Rebuild the loop pages with the studynow ki
 - `Gov-essay-worksheets.pdf` has all three prompts worked through as printable worksheets.
 - `Gov-essay-practice-blank.pdf` has blank worksheets for all three prompts plus a review plan.
 - `Gov-prompt-1-natural-rights.pdf`, `Gov-prompt-2-democracy-evolved.pdf`, `Gov-prompt-3-21st-century.pdf` are the class worksheet filled in for each prompt.
+- `worksheets/` shows all three prompts on the class worksheet, with a switcher.
